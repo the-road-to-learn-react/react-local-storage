@@ -1,55 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-class App extends React.Component {
+const App = () => {
+  const [value, setValue] = React.useState('');
 
-  constructor(props) {
-    super(props);
-    this.state = { hits: null };
-  }
+  const onChange = event => setValue(event.target.value);
 
-  onSearch = (e) => {
-    e.preventDefault();
+  return (
+    <div>
+      <h1>Hello React with Local Storage!</h1>
 
-    const { value } = this.input;
+      <input value={value} type="text" onChange={onChange} />
 
-    if (value === '') {
-      return;
-    }
-
-    const cachedHits = localStorage.getItem(value);
-    if (cachedHits) {
-      this.setState({ hits: JSON.parse(cachedHits) });
-      return;
-    }
-
-    fetch('https://hn.algolia.com/api/v1/search?query=' + value)
-      .then(response => response.json())
-      .then(result => this.onSetResult(result, value));
-  }
-
-  onSetResult = (result, key) => {
-    localStorage.setItem(key, JSON.stringify(result.hits));
-    this.setState({ hits: result.hits });
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Search Hacker News with Local Storage</h1>
-        <p>There shouldn't be a second network request, when you search for something twice.</p>
-
-        <form type="submit" onSubmit={this.onSearch}>
-          <input type="text" ref={node => this.input = node} />
-          <button type="text">Search</button>
-        </form>
-
-        {
-          this.state.hits &&
-          this.state.hits.map(item => <div key={item.objectID}>{item.title}</div>)
-        }
-      </div>
-    );
-  }
-}
+      <p>{value}</p>
+    </div>
+  );
+};
 
 export default App;
+
+// const useStateWithLocalStorage = localStorageKey => {
+//   const [value, setValue] = React.useState(
+//     localStorage.getItem(localStorageKey) || ''
+//   );
+
+//   React.useEffect(() => {
+//     localStorage.setItem(localStorageKey, value);
+//   }, [value]);
+
+//   return [value, setValue];
+// };
+
+// const App = () => {
+//   const [value, setValue] = useStateWithLocalStorage(
+//     'myValueInLocalStorage'
+//   );
+
+//   const onChange = event => setValue(event.target.value);
+
+//   return (
+//     <div>
+//       <h1>Hello React Function Component!</h1>
+
+//       <input value={value} type="text" onChange={onChange} />
+
+//       <p>{value}</p>
+//     </div>
+//   );
+// };
+
+// export default App;
